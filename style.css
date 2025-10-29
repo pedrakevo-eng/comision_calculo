@@ -1,0 +1,135 @@
+/* Estilos personalizados para mejorar la apariencia */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f0f2f5; /* Un gris más suave para el fondo */
+}
+
+/* Estilo para el botón de la barra lateral activo */
+.tab-button.active {
+    background-color: #1e293b; /* slate-800 */
+    color: white;
+    font-weight: 600;
+}
+
+/* Ocultar la barra de desplazamiento en navegadores Webkit */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none; /* IE y Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Animación para la aparición del modal */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.modal-content {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Estilos para inputs y selects deshabilitados */
+input:disabled, select:disabled, textarea:disabled {
+    background-color: #f1f5f9; /* slate-100 */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Estilos para los inputs y selects */
+.form-input {
+     @apply w-full px-4 py-3 text-sm text-slate-700 bg-white border border-slate-300 rounded-xl shadow-sm transition duration-150 ease-in-out
+            focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500;
+}
+
+/* --- INICIO: ESTILOS MODO OSCURO --- */
+
+/* Fondo general de la app */
+.dark body {
+    background-color: #0f172a; /* slate-900 */
+}
+
+/* Contenedor principal y tarjetas */
+.dark .bg-white {
+    @apply bg-slate-800;
+}
+
+/* Textos principales */
+.dark .text-slate-800,
+.dark .text-slate-700 {
+    @apply text-slate-200;
+}
+
+/* Textos secundarios y etiquetas */
+.dark .text-slate-600,
+.dark .text-slate-500 {
+    @apply text-slate-400;
+}
+
+/* Inputs y Selects */
+.dark .form-input {
+    @apply bg-slate-700 border-slate-600 text-slate-200 placeholder:text-slate-400
+           focus:ring-teal-400 focus:border-teal-400;
+}
+
+/* Inputs deshabilitados */
+.dark input:disabled, 
+.dark select:disabled, 
+.dark textarea:disabled {
+    @apply bg-slate-700/50 border-slate-700 opacity-60;
+}
+
+/* Fondos claros (como el header de la tabla) */
+.dark .bg-slate-100 {
+    @apply bg-slate-700;
+}
+
+/* Fondos muy claros (como el hover de la tabla o formularios dashed) */
+.dark .bg-slate-50,
+.dark tr.hover\:bg-slate-50:hover {
+    @apply bg-slate-700/50;
+}
+
+/* Bordes */
+.dark .border-slate-200,
+.dark .divide-slate-200 {
+    @apply border-slate-700;
+}
+
+.dark .border-dashed.border-slate-300 {
+    @apply border-slate-600;
+}
+
+/* Caja de total */
+.dark .bg-teal-50 {
+    @apply bg-teal-900/50;
+}
+.dark .border-teal-200 {
+    @apply border-teal-800;
+}
+.dark .text-teal-800 {
+    @apply text-teal-300;
+}
+
+/* Modal */
+.dark .modal-content {
+    @apply bg-slate-800;
+}
+.dark #close-modal-btn {
+    @apply text-slate-300 hover:bg-slate-700;
+}
+.dark #add-tier-form {
+    @apply bg-slate-700/50 border-slate-600;
+}
+.dark #tiers-list .bg-slate-100 {
+    @apply bg-slate-700;
+}
+.dark #tiers-list .font-semibold {
+    @apply text-slate-200;
+}
+.dark #tiers-list span {
+    @apply text-slate-300;
+}
+
+/* --- FIN: ESTILOS MODO OSCURO --- */
+
