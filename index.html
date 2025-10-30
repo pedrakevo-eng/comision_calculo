@@ -1,185 +1,127 @@
 <!DOCTYPE html>
-<!-- CAMBIO: Se quita la clase 'text-slate-800' de aquí y se pone en el body -->
-<html lang="es">
-<head>
+<html lang="es"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Cálculo de Honorarios y Gastos</title>
-    <!-- Tailwind CSS para los estilos base -->
+    <title>Calculadora de Honorarios y Gastos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase Client para la conexión con la base de datos -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts para una tipografía más agradable -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Iconos de Phosphor para la interfaz -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Hoja de estilos personalizada -->
     <link rel="stylesheet" href="style.css">
-    <!-- CAMBIO: Script de configuración de Tailwind para modo oscuro -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class', // Habilita el modo oscuro basado en una clase
-        }
-    </script>
 </head>
-<!-- CAMBIO: Se agrega 'transition-colors' y 'text-slate-800' -->
-<body class="text-slate-800 transition-colors duration-300">
+<body class="text-slate-800 bg-slate-100 transition-colors duration-300">
 
-    <!-- CAMBIO: Se agrega 'dark:bg-slate-900' -->
-    <div id="app-container" class="flex h-screen bg-slate-100 dark:bg-slate-900">
-        <!-- INICIO: Barra Lateral de Navegación (OCULTA) -->
-        <aside class="w-64 flex-shrink-0 bg-slate-900 text-white p-4 flex flex-col hidden">
-            <!-- ... (contenido oculto sin cambios) ... -->
-        </aside>
-        <!-- FIN: Barra Lateral de Navegación -->
+    <div id="app-container" class="w-full min-h-screen">
+        
+        <input type="hidden" id="exchange-rate">
 
-        <!-- INICIO: Contenido Principal -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- CAMBIO: Se agrega 'dark:bg-slate-800/80' y el botón de modo oscuro -->
-             <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-sm p-6 flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-200">TABLA CALCULO COMISIONES CLIENTES</h1>
-                    <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">(CCC-002)</p>
-                </div>
-                <!-- INICIO: Botón Modo Oscuro -->
-                <button id="dark-mode-toggle" class="p-3 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-all">
-                    <i id="sun-icon" class="ph-bold ph-sun text-2xl hidden"></i>
-                    <i id="moon-icon" class="ph-bold ph-moon text-2xl hidden"></i>
-                </button>
-                <!-- FIN: Botón Modo Oscuro -->
-            </header>
-            
-            <main class="flex-1 overflow-y-auto p-6 lg:p-8 no-scrollbar">
-                <!-- CALCULATOR TAB (Visible por defecto) -->
-                <div id="calculator-tab" class="tab-content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- CAMBIO: Se agregan clases dark:* -->
-                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
-                            <h2 class="text-xl font-bold mb-4 flex items-center gap-2 justify-center text-slate-800 dark:text-slate-200"><i class="ph-bold ph-pencil-simple-line text-teal-500"></i>Agregar valores de la DIM</h2>
-                            <form id="calculation-form" class="space-y-5">
-                                <div>
-                                    <label for="calc-client" class="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Cliente</label>
-                                    <select id="calc-client" required class="form-input">
-                                        <option value="">Seleccione un cliente...</option>
-                                    </select>
-                                </div>
-                                <!-- CAMPO REGLA DE HONORARIOS OCULTO -->
-                                <div class="hidden">
-                                    <label for="calc-fee-rule" class="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Regla de Honorarios</label>
-                                    <select id="calc-fee-rule" required class="form-input" disabled>
-                                        <option value="">Seleccione una regla...</option>
-                                    </select>
-                                </div>
-                                <!-- CAMPO PERFIL DE GASTOS OCULTO -->
-                                <div class="hidden">
-                                    <label for="calc-expense-profile" class="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Perfil de Gastos</label>
-                                    <select id="calc-expense-profile" required class="form-input" disabled>
-                                        <option value="">Seleccione un perfil...</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="cif-local" class="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Valor CIF (en Bs.)</label>
-                                    <input type="number" id="cif-local" step="0.01" required class="form-input" disabled>
-                                </div>
-                                <div>
-                                    <label for="item-count" class="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Cantidad de Items</label>
-                                    <input type="number" id="item-count" value="1" min="0" required class="form-input" disabled>
-                                </div>
-                                <div class="pt-2 space-y-3">
-                                    <label class="block text-sm font-semibold text-slate-600 dark:text-slate-400">Gastos Opcionales</label>
-                                    <div class="flex items-center">
-                                        <input id="calc-regularizacion" type="checkbox" class="h-5 w-5 rounded-md border-slate-300 dark:border-slate-600 text-teal-600 focus:ring-teal-500 transition">
-                                        <label for="calc-regularizacion" class="ml-3 block text-sm text-slate-800 dark:text-slate-300">Incluir Regularización Anticipado</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input id="calc-frontera" type="checkbox" class="h-5 w-5 rounded-md border-slate-300 dark:border-slate-600 text-teal-600 focus:ring-teal-500 transition">
-                                        <label for="calc-frontera" class="ml-3 block text-sm text-slate-800 dark:text-slate-300">Incluir Despacho Frontera</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input id="calc-dam" type="checkbox" class="h-5 w-5 rounded-md border-slate-300 dark:border-slate-600 text-teal-600 focus:ring-teal-500 transition">
-                                        <label for="calc-dam" class="ml-3 block text-sm text-slate-800 dark:text-slate-300">Incluir Formulario DAM</label>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <!-- CAMBIO: Se agregan clases dark:* -->
-                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg">
-                            <h2 class="text-xl font-bold mb-4 flex items-center gap-2 justify-center text-slate-800 dark:text-slate-200"><i class="ph-bold ph-chart-bar text-teal-500"></i>Resultado del Cálculo</h2>
-                            <div id="calculation-result" class="text-slate-600 dark:text-slate-400 min-h-[300px]">
-                                <p>Complete los campos para ver el cálculo en tiempo real.</p>
-                            </div>
-                             <button id="save-calculation-btn" class="mt-6 hidden w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:scale-[1.02] shadow-md flex items-center justify-center gap-2">
-                                <i class="ph ph-floppy-disk"></i> Guardar Cálculo en Historial
-                            </button>
-                        </div>
+        <header class="p-6 lg:p-8 max-w-7xl mx-auto w-full">
+            <div class="relative flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                
+                <div class="flex flex-col items-center gap-2">
+                    <i class="ph-bold ph-calculator text-teal-500 text-2xl"></i>
+                    <div class="text-center">
+                        <h1 class="text-2xl font-bold text-slate-800">
+                            TABLA CALCULO COMISIONES CLIENTES
+                        </h1>
+                        <p class="text-sm font-normal text-slate-500 dark:text-slate-400">
+                            (CCC-002)
+                        </p>
                     </div>
                 </div>
 
-                <!-- Pestañas Ocultas (sin cambios, siguen ocultas) -->
-                <!-- CLIENTS TAB -->
-                <div id="clients-tab" class="tab-content hidden">
-                    <!-- ... contenido ... -->
-                </div>
-                <!-- FEE RULES TAB -->
-                <div id="fee-rules-tab" class="tab-content hidden">
-                    <!-- ... contenido ... -->
-                </div>
-                <!-- EXPENSE PROFILES TAB -->
-                <div id="expense-profiles-tab" class="tab-content hidden">
-                    <!-- ... contenido ... -->
-                </div>
-                <!-- HISTORY TAB -->
-                <div id="history-tab" class="tab-content hidden">
-                    <!-- ... contenido ... -->
-                </div>
-                <!-- SETTINGS TAB -->
-                <div id="settings-tab" class="tab-content hidden">
-                    <!-- ... contenido ... -->
-                </div>
-            </main>
-        </div>
-        <!-- FIN: Contenido Principal -->
-        
-        <!-- MODAL for tiered levels (CAMBIO: clases dark:*) -->
-        <div id="tiered-modal" class="modal fixed inset-0 bg-black/60 flex items-center justify-center p-4 hidden z-50">
-            <div class="modal-content relative w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-                <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                    <p class="text-xl font-bold dark:text-slate-200">Gestionar Niveles Escalonados</p>
-                    <button id="close-modal-btn" class="cursor-pointer z-50 p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                        <i class="ph ph-x text-2xl"></i>
-                    </button>
-                </div>
-                <div class="mt-4">
-                    <h3 id="modal-rule-name" class="text-lg font-semibold text-teal-700 dark:text-teal-400 mb-4"></h3>
-                    <form id="add-tier-form" class="mb-6 p-4 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-700/50 space-y-3">
-                        <h4 class="font-semibold dark:text-slate-200">Agregar Nuevo Nivel</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="number" id="tier-start" placeholder="Rango Inicio (USD)" required class="form-input">
-                            <input type="number" id="tier-end" placeholder="Rango Fin (USD) (vacío=infinito)" class="form-input">
+                <button id="theme-toggle-btn" class="p-2 rounded-full text-slate-600 hover:bg-slate-200 transition-colors sm:absolute sm:right-0">
+                    <i id="theme-sun-icon" class="ph-bold ph-sun text-2xl"></i>
+                    <i id="theme-moon-icon" class="ph-bold ph-moon text-2xl hidden"></i>
+                </button>
+            </div>
+            </header>
+
+        <main class="w-full px-6 lg:px-8 pb-6 lg:pb-8">
+            <div id="calculator-tab" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-xl font-bold mb-6 flex items-center gap-3 text-slate-800"><i class="ph-bold ph-pencil-simple-line text-teal-500"></i>Realizar Nuevo Cálculo</h2>
+                        <form id="calculation-form" class="space-y-5">
+                            <div>
+                                <label for="calc-client" class="block text-sm font-semibold text-slate-600 mb-1">Cliente</label>
+                                <select id="calc-client" required class="form-input">
+                                    <option value="">Seleccione un cliente...</option>
+                                </select>
+                                <p id="calc-client-info" class="text-sm text-sky-700 font-medium mt-2 min-h-[20px] px-1"></p>
+                            </div>
+                            <div>
+                                <label for="calc-fee-rule" class="block text-sm font-semibold text-slate-600 mb-1">Regla de Honorarios</label>
+                                <select id="calc-fee-rule" required class="form-input" disabled>
+                                    <option value="">Seleccione una regla...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="calc-expense-profile" class="block text-sm font-semibold text-slate-600 mb-1">Perfil de Gastos</label>
+                                <select id="calc-expense-profile" required class="form-input" disabled>
+                                    <option value="">Seleccione un perfil...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="cif-local" class="block text-sm font-semibold text-slate-600 mb-1">Valor CIF (en Bs.)</label>
+                                <input type="number" id="cif-local" step="0.01" required class="form-input" disabled>
+                            </div>
+                            <div>
+                                <label for="item-count" class="block text-sm font-semibold text-slate-600 mb-1">Cantidad de Items</label>
+                                <input type="number" id="item-count" value="1" min="0" required class="form-input" disabled>
+                            </div>
+                            <div class="pt-2 space-y-3">
+                                <label class="block text-sm font-semibold text-slate-600">Gastos Opcionales</label>
+                                <div class="flex items-center">
+                                    <input id="calc-regularizacion" type="checkbox" class="h-5 w-5 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500 transition" disabled>
+                                    <label for="calc-regularizacion" class="ml-3 block text-sm text-slate-800">Incluir Regularización Anticipado</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="calc-frontera" type="checkbox" class="h-5 w-5 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500 transition" disabled>
+                                    <label for="calc-frontera" class="ml-3 block text-sm text-slate-800">Incluir Despacho Frontera</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="calc-dam" type="checkbox" class="h-5 w-5 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500 transition" disabled>
+                                    <label for="calc-dam" class="ml-3 block text-sm text-slate-800">Incluir Formulario DAM</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="calc-otros-servicios" type="checkbox" class="h-5 w-5 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500 transition" disabled>
+                                    <label for="calc-otros-servicios" class="ml-3 block text-sm text-slate-800">Incluir Otros Servicios</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-800"><i class="ph-bold ph-chart-bar text-teal-500"></i>Resultado del Cálculo</h2>
+                        <div id="calculation-result" class="text-slate-600 min-h-[300px]">
+                            <p>Complete los campos para ver el cálculo en tiempo real.</p>
                         </div>
-                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="number" step="0.0000001" id="tier-percentage" placeholder="Porcentaje (ej: 0.01)" class="form-input">
-                            <input type="number" step="0.01" id="tier-fixed" placeholder="Valor Fijo (Bs.)" class="form-input">
-                        </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Nota: Llene Porcentaje O Valor Fijo, no ambos.</p>
-                        <button type="submit" class="bg-teal-600 text-white py-2 px-4 rounded-xl font-semibold hover:bg-teal-700 transition-all transform hover:scale-105">Agregar Nivel</button>
-                    </form>
-                    <div id="tiers-list" class="space-y-2 max-h-64 overflow-y-auto pr-2">
-                        <!-- Tiers list will be rendered here -->
+                            <button id="save-calculation-btn" class="mt-6 hidden w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all transform hover:scale-[1.02] shadow-md flex items-center justify-center gap-2">
+                            <i class="ph ph-floppy-disk"></i> Guardar Cálculo en Historial
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Generic Notification -->
-        <div id="notification" class="fixed bottom-5 right-5 text-white py-3 px-6 rounded-xl shadow-2xl text-base opacity-0 transition-all duration-300 transform translate-y-4">
+        </main>
+        <div id="notification" class="fixed bottom-5 right-5 text-white py-3 px-6 rounded-xl shadow-2xl text-base opacity-0 transition-all duration-300 transform translate-y-4 z-50">
             <p id="notification-message"></p>
         </div>
-    </div>
 
+        <button id="image-bubble-btn" class="hidden fixed bottom-6 right-6 z-40 bg-purple-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center hover:bg-purple-700 transition-all transform hover:scale-110">
+            <i class="ph-bold ph-image text-3xl"></i>
+        </button>
+
+        <div id="image-hover-overlay" class="fixed inset-0 bg-black/80 flex items-center justify-center p-10 z-[60] opacity-0 pointer-events-none transition-opacity duration-300">
+            <img id="hover-image" src="" alt="Recordatorio" class="max-w-full max-h-full rounded-lg shadow-2xl">
+        </div>
+
+    </div> <footer class="w-full p-6 text-center">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+            &copy; 2025 Derechos Reservados. Contabilidad KIH.
+        </p>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>
-

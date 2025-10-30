@@ -2,14 +2,54 @@
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: #f0f2f5; /* Un gris más suave para el fondo */
+    transition: background-color 0.3s, color 0.3s;
 }
 
-/* Estilo para el botón de la barra lateral activo */
-.tab-button.active {
-    background-color: #1e293b; /* slate-800 */
-    color: white;
-    font-weight: 600;
+/* --- **** INICIO CAMBIO: Estilos Modo Oscuro (Añadido) **** --- */
+/* Estilos base para modo oscuro */
+.dark body {
+    background-color: #0f172a; /* slate-900 */
+    color: #e2e8f0; /* slate-300 */
 }
+
+/* Overrides para clases de Tailwind usadas en el HTML */
+.dark .bg-white {
+    background-color: #1e293b !important; /* slate-800 */
+}
+.dark .text-slate-800 { 
+    color: #f1f5f9 !important; /* slate-100 */ 
+}
+.dark .text-slate-600 { 
+    color: #94a3b8 !important; /* slate-500 */ 
+}
+.dark .text-slate-700 { 
+    color: #cbd5e1 !important; /* slate-400 */ 
+}
+.dark .bg-slate-100 { 
+    background-color: #334155 !important; /* slate-700 */ 
+}
+.dark .border-slate-200 { 
+    border-color: #334155 !important; /* slate-700 */ 
+}
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #334155 !important; /* slate-700 */
+}
+.dark .hover\:bg-slate-50:hover {
+    background-color: #26334a !important; /* Un poco más oscuro que slate-800 */
+}
+.dark .text-sky-700 { 
+    color: #7dd3fc !important; /* sky-400 */ 
+}
+
+/* Estilos para el botón de tema */
+.dark #theme-toggle-btn {
+    color: #94a3b8; /* slate-400 */
+}
+.dark #theme-toggle-btn:hover {
+    background-color: #334155; /* slate-700 */
+}
+/* --- **** FIN CAMBIO **** --- */
+
 
 /* Ocultar la barra de desplazamiento en navegadores Webkit */
 .no-scrollbar::-webkit-scrollbar {
@@ -20,7 +60,7 @@ body {
     scrollbar-width: none; /* Firefox */
 }
 
-/* Animación para la aparición del modal */
+/* Animación para la aparición del modal (usado por overlay) */
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
@@ -29,107 +69,44 @@ body {
     animation: fadeIn 0.3s ease-out forwards;
 }
 
+/* Estilos para el overlay de imagen */
+#image-hover-overlay {
+    transition: opacity 0.2s ease-in-out;
+}
+
 /* Estilos para inputs y selects deshabilitados */
-input:disabled, select:disabled, textarea:disabled {
+input:disabled, select:disabled, textarea:disabled, button:disabled {
     background-color: #f1f5f9; /* slate-100 */
     cursor: not-allowed;
     opacity: 0.7;
 }
+/* --- **** INICIO CAMBIO: Dark Mode para deshabilitados (Añadido) **** --- */
+.dark input:disabled, .dark select:disabled, .dark textarea:disabled, .dark button:disabled {
+    background-color: #1e293b; /* slate-800 */
+    opacity: 0.5;
+}
+/* --- **** FIN CAMBIO **** --- */
+
 
 /* Estilos para los inputs y selects */
 .form-input {
      @apply w-full px-4 py-3 text-sm text-slate-700 bg-white border border-slate-300 rounded-xl shadow-sm transition duration-150 ease-in-out
-            focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500;
+            focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500
+            /* --- **** INICIO CAMBIO: Dark Mode para inputs (Añadido) **** --- */
+            dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300
+            dark:focus:ring-teal-400 dark:focus:border-teal-400;
+            /* --- **** FIN CAMBIO **** --- */
 }
 
-/* --- INICIO: ESTILOS MODO OSCURO --- */
-
-/* Fondo general de la app */
-.dark body {
-    background-color: #0f172a; /* slate-900 */
-}
-
-/* Contenedor principal y tarjetas */
-.dark .bg-white {
-    @apply bg-slate-800;
-}
-
-/* Textos principales */
-.dark .text-slate-800,
-.dark .text-slate-700 {
-    @apply text-slate-200;
-}
-
-/* Textos secundarios y etiquetas */
-.dark .text-slate-600,
-.dark .text-slate-500 {
-    @apply text-slate-400;
-}
-
-/* Inputs y Selects */
+/* --- **** INICIO CAMBIO: Regla CSS adicional para .form-input en modo oscuro **** --- */
+/* Esto es un respaldo por si el @apply no es procesado */
 .dark .form-input {
-    @apply bg-slate-700 border-slate-600 text-slate-200 placeholder:text-slate-400
-           focus:ring-teal-400 focus:border-teal-400;
+    background-color: #1e293b; /* slate-800 */
+    border-color: #334155; /* slate-700 */
+    color: #cbd5e1; /* slate-300 */
 }
-
-/* Inputs deshabilitados */
-.dark input:disabled, 
-.dark select:disabled, 
-.dark textarea:disabled {
-    @apply bg-slate-700/50 border-slate-700 opacity-60;
+.dark .form-input:focus {
+    --tw-ring-color: #2dd4bf; /* teal-400 */
+    border-color: #2dd4bf; /* teal-400 */
 }
-
-/* Fondos claros (como el header de la tabla) */
-.dark .bg-slate-100 {
-    @apply bg-slate-700;
-}
-
-/* Fondos muy claros (como el hover de la tabla o formularios dashed) */
-.dark .bg-slate-50,
-.dark tr.hover\:bg-slate-50:hover {
-    @apply bg-slate-700/50;
-}
-
-/* Bordes */
-.dark .border-slate-200,
-.dark .divide-slate-200 {
-    @apply border-slate-700;
-}
-
-.dark .border-dashed.border-slate-300 {
-    @apply border-slate-600;
-}
-
-/* Caja de total */
-.dark .bg-teal-50 {
-    @apply bg-teal-900/50;
-}
-.dark .border-teal-200 {
-    @apply border-teal-800;
-}
-.dark .text-teal-800 {
-    @apply text-teal-300;
-}
-
-/* Modal */
-.dark .modal-content {
-    @apply bg-slate-800;
-}
-.dark #close-modal-btn {
-    @apply text-slate-300 hover:bg-slate-700;
-}
-.dark #add-tier-form {
-    @apply bg-slate-700/50 border-slate-600;
-}
-.dark #tiers-list .bg-slate-100 {
-    @apply bg-slate-700;
-}
-.dark #tiers-list .font-semibold {
-    @apply text-slate-200;
-}
-.dark #tiers-list span {
-    @apply text-slate-300;
-}
-
-/* --- FIN: ESTILOS MODO OSCURO --- */
-
+/* --- **** FIN CAMBIO **** --- */
