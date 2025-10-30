@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const limite = parseInt(profileData.items_dim_dav_umbral_limite) || 0;
                 const amount = parseFloat(profileData.items_dim_dav_umbral_monto) || 0;
                 if (item_count > limite && amount > 0) {
-                    expenseItems.push({ concepto: `Items Declarados en DIM y DAV (Mayor a ${limite} items)`, monto_bs: amount });
+                    expenseItems.push({ concepto: `Items Dec. en DIM y DAV (Mayor a ${limite})`, monto_bs: amount });
                     totalExpensesBS += amount;
                 }
             }
